@@ -26,7 +26,7 @@ import {
   X,
 } from "lucide-react"
 
-export default function Component() {
+export default function Chat() {
   const [message, setMessage] = useState("")
 
   const conversations = [
@@ -38,6 +38,7 @@ export default function Component() {
       time: "16:14",
       hasFlower: true,
       unread: false,
+      unreadCount: 0,
     },
     {
       id: 2,
@@ -48,6 +49,7 @@ export default function Component() {
       isGroup: true,
       online: true,
       unread: false,
+      unreadCount: 0,
       isActive: true,
     },
     {
@@ -57,6 +59,7 @@ export default function Component() {
       lastMessage: "Voice message (00:56)",
       time: "16:01",
       unread: true,
+      unreadCount: 3,
       isVoice: true,
     },
     {
@@ -66,6 +69,7 @@ export default function Component() {
       lastMessage: "Good luck!",
       time: "16:20",
       unread: false,
+      unreadCount: 0,
       online: true,
     },
     {
@@ -75,6 +79,7 @@ export default function Component() {
       lastMessage: "Missed call",
       time: "16:20",
       unread: false,
+      unreadCount: 0,
       online: true,
       missedCall: true,
     },
@@ -85,6 +90,7 @@ export default function Component() {
       lastMessage: "Thank you",
       time: "19:33",
       unread: false,
+      unreadCount: 0,
     },
     {
       id: 7,
@@ -93,6 +99,7 @@ export default function Component() {
       lastMessage: "Mariam 😊",
       time: "19:04",
       unread: true,
+      unreadCount: 5,
       isGroup: true,
     },
     {
@@ -102,6 +109,7 @@ export default function Component() {
       lastMessage: "Hello Mariam 👋 please check",
       time: "19:01",
       unread: false,
+      unreadCount: 0,
     },
     {
       id: 9,
@@ -110,6 +118,7 @@ export default function Component() {
       lastMessage: "Missed call",
       time: "12:51",
       unread: false,
+      unreadCount: 0,
       missedCall: true,
     },
     {
@@ -119,6 +128,7 @@ export default function Component() {
       lastMessage: "https://www.youtube.com/wat...",
       time: "10:09",
       unread: false,
+      unreadCount: 0,
     },
   ]
 
@@ -298,10 +308,14 @@ export default function Component() {
                       {conv.lastMessage}
                     </p>
                   </div>
-                  <div className="text-xs text-gray-400">{conv.time}</div>
-                  {conv.unread && (
-                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 h-2 w-2 bg-red-500 rounded-full"></div>
-                  )}
+                  <div className="flex flex-col items-end relative">
+                    <div className="text-xs text-gray-400">{conv.time}</div>
+                    {conv.unread && conv.unreadCount > 0 && (
+                      <div className="mt-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center">
+                        <span className="text-xs text-white font-medium">{conv.unreadCount}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 {index < conversations.length - 1 && <div className="mx-2 my-1 h-px bg-gray-800"></div>}
               </div>
