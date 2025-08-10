@@ -6,6 +6,7 @@ import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SignInOauthButton } from "@/components/sign-in-oauth-button"
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("")
@@ -31,8 +32,8 @@ export default function SignUpPage() {
             //show loading
           },
           onSuccess: (ctx) => {
-            //redirect to the dashboard or sign in page
-            window.location.href = "/login"
+            //redirect to verification email page
+            window.location.href = "/auth/verify-email"
           },
           onError: (ctx) => {
             switch (ctx.error.code) {
@@ -64,6 +65,7 @@ export default function SignUpPage() {
       setLoading(false)
     }
   }
+
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
@@ -118,10 +120,33 @@ export default function SignUpPage() {
                 {loading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
+
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-zinc-700"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-zinc-900 px-2 text-zinc-400">Or continue with</span>
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <SignInOauthButton 
+                  provider="github" 
+                  onError={setError}
+                />
+                <SignInOauthButton 
+                  provider="google" 
+                  onError={setError}
+                />
+              </div>
+            </div>
+
             <div className="mt-6 text-center">
               <p className="text-zinc-400 text-sm">
                 Already have an account?{" "}
-                <Link href="/login" className="text-white hover:underline font-medium">
+                <Link href="/auth/login" className="text-white hover:underline font-medium">
                   Sign in
                 </Link>
               </p>
