@@ -14,12 +14,10 @@ export const auth = betterAuth({
   }),
   emailVerification: {
     sendOnSignUp: true,
-    expiresIn: 60 * 60,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       const link = new URL(url);
       link.searchParams.set("callbackURL", "/auth/verify");
-
       await sendEmailAction({
         to: user.email,
         subject: "Verify your email address",

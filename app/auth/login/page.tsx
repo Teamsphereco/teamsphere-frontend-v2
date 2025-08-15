@@ -117,6 +117,14 @@ export default function LoginPage() {
                   required
                   className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-400 focus:border-zinc-600 focus:ring-zinc-600"
                 />
+                <div className="flex justify-end">
+                  <Link 
+                    href="/auth/forgot-password" 
+                    className="text-sm text-zinc-400 hover:text-white hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
               {error && (
                 <div className="text-red-400 text-sm text-center">{error}</div>
