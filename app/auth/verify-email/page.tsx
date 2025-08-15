@@ -43,7 +43,10 @@ export default function VerifyEmailPage() {
 
           <div className="space-y-3">
             <p className="text-xs text-zinc-400">
-              Didn't receive the email? Check your spam folder or contact support.
+              Didn't receive the email? Check your spam folder or{" "}
+              <a href="/auth/verify?error=resend_verification" className="text-white hover:underline">
+                request a new verification email
+              </a>.
             </p>
             
             <div className="w-full">

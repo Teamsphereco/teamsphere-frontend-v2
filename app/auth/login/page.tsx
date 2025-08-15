@@ -17,19 +17,22 @@ export default function LoginPage() {
 
   const router = useRouter()
 
+  let shouldRedirectToVerify = false;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
     try {
-      await authClient.signIn.email(
+      const result = await authClient.signIn.email(
         {
           email,
           password,
         },
         {
           onError: (ctx) => {
+            setLoading(false);
             switch (ctx.error.code) {
               case "INVALID_EMAIL_OR_PASSWORD":
                 setError(
@@ -37,9 +40,7 @@ export default function LoginPage() {
                 );
                 break;
               case "EMAIL_NOT_VERIFIED":
-                setError(
-                  "Please check your email and click the verification link before signing in"
-                );
+                shouldRedirectToVerify = true;
                 break;
               case "ACCOUNT_LOCKED":
                 setError(
@@ -56,7 +57,6 @@ export default function LoginPage() {
                 setError("Email address is required");
                 break;
               default:
-                // Fallback to a user-friendly message instead of raw error
                 setError(
                   "Unable to sign in. Please try again or contact support if the problem persists"
                 );
@@ -65,11 +65,23 @@ export default function LoginPage() {
           },
         }
       );
-      router.push("/chat")
+
+      /**
+       * callback functions have their own scope,
+       * and returning from them doesn't affect the calling function's execution flow.
+       */
+      if (shouldRedirectToVerify) {
+        router.push("/auth/verify?error=email_not_verified");
+        return;
+      }
+
+      if (result?.data?.token) {
+        router.push("/chat");
+      }
     } catch {
-      setError("Invalid email or password. Please try again.")
+      setError("Invalid email or password. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
