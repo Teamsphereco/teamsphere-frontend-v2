@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input'
 import { resetPassword } from '@/lib/auth-client'
 import Link from 'next/link'
 import { useRouter} from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, use } from 'react';
 
 interface PageProps {
-  searchParams: { token?: string }
+  searchParams: Promise<{ token?: string }>
 }
-export default function ResetPasswordPage({ searchParams }: PageProps) {
+export default function ResetPasswordPage(props: PageProps) {
+  const searchParams = use(props.searchParams);
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -20,7 +21,11 @@ export default function ResetPasswordPage({ searchParams }: PageProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const router = useRouter()
-   const token = searchParams.token
+  const token = searchParams.token
+
+  // Check if passwords match in real-time
+  const passwordsMatch = password === confirmPassword && confirmPassword !== ""
+  const passwordsDoNotMatch = confirmPassword !== "" && password !== confirmPassword
 
   // Redirect if no token is provided
   useEffect(() => {
@@ -189,7 +194,10 @@ export default function ResetPasswordPage({ searchParams }: PageProps) {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-400 focus:border-zinc-600 focus:ring-zinc-600 pr-10"
+                    className={`bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-400 focus:border-zinc-600 focus:ring-zinc-600 pr-10 ${
+                      passwordsMatch ? 'border-green-500 focus:border-green-500 focus:ring-green-500' : 
+                      passwordsDoNotMatch ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+                    }`}
                   />
                   <button
                     type="button"
@@ -208,6 +216,18 @@ export default function ResetPasswordPage({ searchParams }: PageProps) {
                     )}
                   </button>
                 </div>
+                
+                {/* Real-time password match indicator */}
+                {confirmPassword !== "" && (
+                  <div className={`flex items-center gap-2 text-xs ${
+                    passwordsMatch ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    <div className={`w-1 h-1 rounded-full ${
+                      passwordsMatch ? 'bg-green-400' : 'bg-red-400'
+                    }`}></div>
+                    {passwordsMatch ? 'Passwords match' : 'Passwords do not match'}
+                  </div>
+                )}
               </div>
 
               {/* Password Requirements */}
@@ -230,6 +250,11 @@ export default function ResetPasswordPage({ searchParams }: PageProps) {
                     <div className={`w-1 h-1 rounded-full ${/(?=.*\d)/.test(password) ? 'bg-green-400' : 'bg-zinc-500'}`}></div>
                     One number
                   </div>
+                  {/* Add password match requirement */}
+                  <div className={`flex items-center gap-2 ${passwordsMatch ? 'text-green-400' : 'text-zinc-500'}`}>
+                    <div className={`w-1 h-1 rounded-full ${passwordsMatch ? 'bg-green-400' : 'bg-zinc-500'}`}></div>
+                    Passwords must match
+                  </div>
                 </div>
               </div>
 
@@ -238,8 +263,8 @@ export default function ResetPasswordPage({ searchParams }: PageProps) {
               )}
               <Button
                 type="submit"
-                disabled={loading}
-                className="w-full bg-white text-zinc-900 hover:bg-zinc-100 font-medium"
+                disabled={loading || !passwordsMatch || validatePassword(password) !== null}
+                className="w-full bg-white text-zinc-900 hover:bg-zinc-100 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Updating Password..." : "Update Password"}
               </Button>
@@ -257,5 +282,5 @@ export default function ResetPasswordPage({ searchParams }: PageProps) {
         </Card>
       </div>
     </div>
-  )
+  );
 }
