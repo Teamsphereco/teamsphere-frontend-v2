@@ -18,6 +18,7 @@ FROM base as build
 # Set the environment to production for the build
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_PUBLIC_BETTER_AUTH_URL=https://teamsphere.co
 
 # Build the Next.js application (with ContentLayer MDX processing)
 RUN npm run build
